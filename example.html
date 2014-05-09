@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+  <head>
+    <style>
+      .items {
+        width: 200px;
+        margin: 100px auto;
+      }
+      .item {
+        padding: 5px 10px;
+        background-color: #eee;
+        border-top: 2px solid #fff;
+        cursor: move;
+        z-index: 1;
+      }
+      .last-drop-target {
+        border-top: 2px solid #fff;
+        height: 20px;
+        width: 100%;
+      }
+      .sb-dragover {
+        border-top-color: #888;
+      }
+      .sb-dragging {
+        background-color: #ddd;
+      }
+    </style>
+  </head>
+  <body ng-app="app">
+    <div class="items" ng-controller="Controller">
+      <div class="item" ng-repeat="item in items track by item.id" sb-draggable sb-dragdata="{{$index}}"
+        sb-drop-target sb-dragover="onDragover($data, $index)" sb-drop="onDrop($data, $index)" ng-bind="item.name">
+      </div>
+      <div class="last-drop-target" sb-drop-target sb-dragover="onDragover($data, $index)" sb-drop="onDrop($data, items.length+1)">&nbsp;</div>
+    </div>
+    <script src="./bower_components/angular/angular.js"></script>
+    <script src="./sb-drag-drop.js"></script>
+    <script>
+      angular.module('app', ['sbDragDrop'])
+
+        .controller('Controller', function ($scope) {
+
+          $scope.items = [
+            { name: 'banana', id: 2 },
+            { name: 'apple', id: 1 },
+            { name: 'carrot', id: 3 },
+          ];
+
+          $scope.onDragover = function (itemIndex, targetIndex) {
+            if (itemIndex == targetIndex || itemIndex + 1 == targetIndex) return false;
+          };
+
+          $scope.onDrop = function (itemIndex, targetIndex) {
+            if (itemIndex < targetIndex) --targetIndex;
+            var item = $scope.items[itemIndex];
+            $scope.items.splice(itemIndex, 1);
+            $scope.items.splice(targetIndex, 0, item);
+          };
+        });
+    </script>
+  </body>
+</html>

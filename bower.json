@@ -1,0 +1,11 @@
+{
+  "name": "angular-sb-drag-and-drop",
+  "description": "HTML5 drag and drop for AngularJS",
+  "version": "0.0.1",
+  "main": [
+    "sb-drag-and-drop.js"
+  ],
+  "dependencies": {
+    "angular": "~1.2.0"
+  }
+}
