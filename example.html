@@ -7,31 +7,32 @@
         margin: 100px auto;
       }
       .item {
+        margin: 2px;
         padding: 5px 10px;
         background-color: #eee;
-        border-top: 2px solid #fff;
+      }
+      .handle {
+        display: inline-block;
+        float: right;
+        height: 1em;
+        width: 1em;
+        background-color: #aaa;
         cursor: move;
-        z-index: 1;
-      }
-      .last-drop-target {
-        border-top: 2px solid #fff;
-        height: 20px;
-        width: 100%;
-      }
-      .sb-dragover {
-        border-top-color: #888;
       }
       .sb-dragging {
-        background-color: #ddd;
+        background-color: #E5F6FD;
       }
     </style>
   </head>
   <body ng-app="app">
     <div class="items" ng-controller="Controller">
-      <div class="item" ng-repeat="item in items track by item.id" sb-draggable sb-dragdata="{{$index}}"
-        sb-drop-target sb-dragover="onDragover($data, $index)" sb-drop="onDrop($data, $index)" ng-bind="item.name">
+      <div class="item" ng-repeat="item in items" 
+          sb-draggable sb-dragdata="{id: {{item.id}}, initialIndex: $index}" 
+          ng-mousedown="checkForHandle($event)" sb-dragend="checkCompleted($data, $completed)"
+          sb-drop-target sb-dragover="setItemIndex($data.id, $index)">
+        <span ng-bind="item.name"></span>
+        <span class="handle"></span>
       </div>
-      <div class="last-drop-target" sb-drop-target sb-dragover="onDragover($data, $index)" sb-drop="onDrop($data, items.length+1)">&nbsp;</div>
     </div>
     <script src="./bower_components/angular/angular.js"></script>
     <script src="./sb-drag-and-drop.js"></script>
@@ -46,15 +47,28 @@
             { name: 'carrot', id: 3 },
           ];
 
-          $scope.onDragover = function (itemIndex, targetIndex) {
-            if (itemIndex == targetIndex || itemIndex + 1 == targetIndex) return false;
+          $scope.checkForHandle = function (event) {
+            if (!angular.element(event.target).hasClass('handle')) event.preventDefault();
           };
 
-          $scope.onDrop = function (itemIndex, targetIndex) {
-            if (itemIndex < targetIndex) --targetIndex;
-            var item = $scope.items[itemIndex];
-            $scope.items.splice(itemIndex, 1);
-            $scope.items.splice(targetIndex, 0, item);
+          $scope.setItemIndex = function (id, targetIndex) {
+            var item, itemIndex; 
+            
+            $scope.items.forEach(function (test, index) {
+              if (test.id == id) {
+                itemIndex = index;
+                item = test;
+              }
+            });
+
+            if (itemIndex != targetIndex) {
+              $scope.items.splice(itemIndex, 1);
+              $scope.items.splice(targetIndex, 0, item);
+            }
+          };
+
+          $scope.checkCompleted = function (data, completed) {
+            if (!completed) $scope.setItemIndex(data.id, data.initialIndex);
           };
         });
     </script>
