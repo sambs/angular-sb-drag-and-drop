@@ -1,7 +1,7 @@
 {
   "name": "angular-sb-drag-and-drop",
   "description": "HTML5 drag and drop for AngularJS",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": [
     "sb-drag-and-drop.js"
   ],
